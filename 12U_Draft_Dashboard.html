@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12U DRAFT BOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #fbbf24;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: #fbbf24;
+            letter-spacing: 3px;
+        }
+        
+        .controls {
+            background: #16213e;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2d3a5a;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+        }
+        
+        .controls-left {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            font-weight: 600;
+        }
+        
+        select, button {
+            background: #1a1a2e;
+            border: 1px solid #3d4a6a;
+            color: #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        select:hover, button:hover {
+            border-color: #fbbf24;
+            background: #1f2942;
+        }
+        
+        .toggle-btn {
+            padding: 8px 16px;
+            font-weight: 600;
+        }
+        
+        .toggle-btn.active {
+            background: #fbbf24;
+            color: #1a1a2e;
+            border-color: #fbbf24;
+        }
+        
+        .export-btn {
+            background: #4ade80;
+            color: #1a1a2e;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .export-btn:hover {
+            background: #22c55e;
+        }
+        
+        .player-count {
+            background: #fbbf24;
+            color: #1a1a2e;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .team-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 20px;
+            background: #12192b;
+            border-bottom: 1px solid #2d3a5a;
+        }
+        
+        .team-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .player-list {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .player-card {
+            background: #16213e;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+            border: 1px solid #2d3a5a;
+        }
+        
+        .player-card:hover {
+            border-color: #4d5a7a;
+        }
+        
+        .player-card.drafted {
+            opacity: 0.7;
+        }
+        
+        .player-main {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .rank-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #1a1a2e;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+        }
+        
+        .name-block {
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .attitude-icon {
+            font-size: 1rem;
+        }
+        
+        .attitude-awesome { color: #fbbf24; }
+        .attitude-good { color: #4ade80; }
+        .attitude-pleasant { color: #60a5fa; }
+        .attitude-concern { color: #f87171; }
+        
+        .team-info {
+            font-size: 0.8rem;
+            color: #8899aa;
+            margin-top: 4px;
+        }
+        
+        .caution-flags {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .caution-flag {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .quick-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: #8899aa;
+            text-transform: uppercase;
+        }
+        
+        .position-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        
+        .position-tag {
+            background: #2d3a5a;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .position-tag.highlight {
+            background: #4ade80;
+            color: #1a1a2e;
+        }
+        
+        .intel-section {
+            background: rgba(251, 191, 36, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #fbbf24;
+            max-width: 300px;
+            font-style: italic;
+        }
+        
+        .video-link {
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        
+        .video-link:hover {
+            transform: scale(1.2);
+        }
+        
+        .draft-select {
+            min-width: 120px;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background: #12192b;
+            border-top: 1px solid #2d3a5a;
+        }
+        
+        .tab-btn {
+            background: #1a1a2e;
+            border: 1px solid #3d4a6a;
+            color: #8899aa;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn:hover {
+            border-color: #fbbf24;
+            color: #e0e0e0;
+        }
+        
+        .tab-btn.active {
+            background: #fbbf24;
+            color: #1a1a2e;
+            border-color: #fbbf24;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            background: #12192b;
+            border-top: 1px solid #2d3a5a;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .eval-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .eval-stat {
+            text-align: center;
+        }
+        
+        .eval-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+        
+        .eval-stat-label {
+            font-size: 0.7rem;
+            color: #8899aa;
+        }
+        
+        .eval-comments {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #c0c0c0;
+            margin-top: 10px;
+        }
+        
+        /* Team colors */
+        .team-braves { background-color: #2d5a27 !important; }
+        .team-pirates { background-color: #c9a227 !important; color: #1a1a2e !important; }
+        .team-phillies { background-color: #a82c2c !important; }
+        .team-yankees { background-color: #1e3a5f !important; }
+        .team-rangers { background-color: #2563eb !important; }
+        .team-giants { background-color: #ea580c !important; }
+        
+        .drafted-braves { background-color: rgba(45, 90, 39, 0.5) !important; }
+        .drafted-pirates { background-color: rgba(201, 162, 39, 0.5) !important; }
+        .drafted-phillies { background-color: rgba(168, 44, 44, 0.5) !important; }
+        .drafted-yankees { background-color: rgba(30, 58, 95, 0.5) !important; }
+        .drafted-rangers { background-color: rgba(37, 99, 235, 0.5) !important; }
+        .drafted-giants { background-color: rgba(234, 88, 12, 0.5) !important; }
+        
+        @media (max-width: 768px) {
+            .player-main {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls-left {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚾ 12U DRAFT BOARD ⚾</h1>
+    </div>
+    
+    <div class="controls">
+        <div class="controls-left">
+            <div class="control-group">
+                <label>Sort By:</label>
+                <select id="sortSelect">
+                    <option value="HitRank">Hit Rank</option>
+                    <option value="PitchRank">Pitch Rank (P)</option>
+                    <option value="CatchRank">Catch Rank (C)</option>
+                    <option value="SSRank">SS Rank</option>
+                    <option value="InfRank">Infield Rank</option>
+                    <option value="1BRank">1B Rank</option>
+                    <option value="OFRank">OF Rank</option>
+                    <option value="MPH">MPH</option>
+                    <option value="Size">Size</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button id="sortOrderBtn" class="toggle-btn active">HIGH → LOW</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Status:</label>
+                <select id="statusFilter">
+                    <option value="all">All Players</option>
+                    <option value="undrafted">Undrafted Only</option>
+                    <option value="drafted">Drafted Only</option>
+                </select>
+            </div>
+            
+            <div class="player-count" id="playerCount">0 Players</div>
+        </div>
+        
+        <button class="export-btn" id="exportBtn">📄 Export by Team</button>
+    </div>
+    
+    <div class="team-legend">
+        <span class="team-badge team-braves">BRAVES (Me)</span>
+        <span class="team-badge team-pirates">PIRATES</span>
+        <span class="team-badge team-phillies">PHILLIES</span>
+        <span class="team-badge team-yankees">YANKEES</span>
+        <span class="team-badge team-rangers">RANGERS</span>
+        <span class="team-badge team-giants">GIANTS</span>
+    </div>
+    
+    <div class="player-list" id="playerList"></div>
+    
+    <script>
+        // Player data
+        const playersData = [
+  {
+    "Last": "Coleman",
+    "First": "Chandler",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.0,
+    "MPH": 49.0,
+    "Intel": "Can play first if you need him",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 10.3,
+    "PitchRank": "",
+    "CatchRank": 3.0,
+    "SSRank": "",
+    "InfRank": 2.0,
+    "1BRank": 2.1,
+    "OFRank": 2.0,
+    "Spring ": "Majors",
+    "Team": "Rays",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 9.0,
+    "SMr Run": 9.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 9.0,
+    "Smr Infield": 8.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "C, 1B",
+    "Smr Bat Order": "1-2",
+    "Smr Comments": "Chandler is a great player who brings a great attitude day in and day out. Fun to coach and loves being out there. Did a great job leading off for us all season. Defensively, while he is a sound catcher, his lack of arm strength limits him behind the plate, never a threat to throw anyone out. Very good defensively in many spots (2nd, 1st and OF) - again arm strength is the only real weakness.",
+    "Tryout Hit": 6,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 7.5,
+    "Notes": ", baseball kid",
+    "Spring Hit": 9,
+    "Spring Run": 10,
+    "Spring Throw": 6,
+    "Spring OF": 8,
+    "Spring Inf": 9,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Good",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "C, 1B, 2B",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Chandler is an excellent player and has great enthusiasm for the game. Kid has way more power than his size lets on, when he connects the bull jumps off the bat. Plays a good 2b and has the baseball IQ for catcher. His one flaw is his arm strength. Simply can't throw the ball very far due to his funky but accurate throwing mechanics, limiting where he can play on the field. Great family and awesome dugout presence. "
+  },
+  {
+    "Last": "Lumpkin",
+    "First": "James",
+    "Nickname": "James",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": 50.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": 1.0,
+    "Attitude": 3.0,
+    "HitRank": 10.2,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": 3.1,
+    "InfRank": 7.2,
+    "1BRank": "",
+    "OFRank": 5.4,
+    "Spring ": "Majors",
+    "Team": "Marlins",
+    "Summer Team": "11U Bulls",
+    "Smr Hit": 8.0,
+    "SMr Run": 9.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "3B, OF",
+    "Smr Bat Order": "1-2",
+    "Smr Comments": "James batted leadoff for us all summer and did very well there.  Leadoff was a natural fit and he was very comfortable in that position.  He finished the season with the 3rd best batting avg.  Really good base-runner and good in the OF as well as at 3rd base.  He is very athletic and makes good plays in the field consistently.   He did not get on the mound any this summer, unfortunately but I think will be able to contribute as a P in the future because his arm is very strong.  ",
+    "Tryout Hit": 6,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 8.0,
+    "Tryout Pops": 8.0,
+    "Notes": "baseball kid",
+    "Spring Hit": 8,
+    "Spring Run": 10,
+    "Spring Throw": 8,
+    "Spring OF": 9,
+    "Spring Inf": 5,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Good",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, SS, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Great kid, great family, outstanding athlete. Well liked by all players, coaches & opponents. Hits well - average and power (for his size). Very live arm. Pitching could be erratic, however, with the right pitching coach, has HUGE upside. Solid Bronco candidate. One of my all time favorite players."
+  },
+  {
+    "Last": "Delmotte",
+    "First": "Remy",
+    "Nickname": "Remy",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": 52.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": 1.0,
+    "Attitude": 1.0,
+    "HitRank": 10.1,
+    "PitchRank": 3.0,
+    "CatchRank": "",
+    "SSRank": 1.2,
+    "InfRank": 6.2,
+    "1BRank": 2.2,
+    "OFRank": 5.3,
+    "Spring ": "Majors",
+    "Team": "Royals",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 8.0,
+    "SMr Run": 7.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "1B, 2B, OF",
+    "Smr Bat Order": "7-8",
+    "Smr Comments": "Remy had a nice summer overall. He filled in really well at 1st and also played plenty of 2nd and OF for us. He has a reliable glove and is always giving his best effort. Offensively has a good bit of power, watched too many pitches this summer but ultimately walked a ton. Extremely quiet kid but a joy to coach. ",
+    "Tryout Hit": 5,
+    "Tryout Run": 6.75,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 7.5,
+    "Notes": " like the kid",
+    "Spring Hit": 8,
+    "Spring Run": 9,
+    "Spring Throw": 9,
+    "Spring OF": 9,
+    "Spring Inf": 9,
+    "Spring Pitch": "Poor",
+    "Spring Catch": "Good",
+    "Spring Attendance": "Average",
+    "Spring Positions": "C, SS",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Solid Lead off bat or 5-6 hole. Hits for contact and runs bases very well. All around stud in infield and legit SS. Can play anywhere in field at Bronco level and excel (other than 1B). solid arm for size but for some reason it doesn't transfer the mound. Quiet kid and a joy to coach. Was on Sutton middle school team, which interfered sometimes."
+  },
+  {
+    "Last": "Warren",
+    "First": "Micah",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 45.0,
+    "Intel": "Will go yard, can be okay in outfield",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 10.0,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": 2.0,
+    "Spring ": "Majors",
+    "Team": "Rockies",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 7.0,
+    "SMr Run": 8.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 8.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "2B, OF",
+    "Smr Bat Order": "3-4, 5-6",
+    "Smr Comments": "Micah drives the ball really well, takes coaching really well, and plays hard with no complaining.  He locked down 2B most of the season for us and platooned in Center. He looks unconventional at 2B and still generally needs to learn the position as for as covering the bag, DP depth, Infield in, etc., but has the raw abilities. He made virtually everyplace involving a round ball and moves to his left really well.  Doesn't move to the right as well casing him problems to cover the bag at times. He hits with power however unluckily right at a lot of players this summer, still finished tip 5 in BA and was one of two guys to hit a HR this summer.  He hits mostly line drives and we would put on a hit and run with him up a lot as he did pop up very often.  The arm could be stronger but he is improving. Pleasure to coach, great addition to ant team! Really helpful and positive dad too. ",
+    "Tryout Hit": 10,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 6.5,
+    "Notes": "kind of weird",
+    "Spring Hit": 9,
+    "Spring Run": 9,
+    "Spring Throw": 9,
+    "Spring OF": 10,
+    "Spring Inf": 6,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Sleeper draft pick for us that ended up batting clean up. Hits the hell out of the baseball so keep your head on a swivel in the cage. Great kid & great parents. Definitely a bronco guy"
+  },
+  {
+    "Last": "Melgarejo",
+    "First": "Noah",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.75,
+    "MPH": 51.0,
+    "Intel": "is good, but also has an attitude issue, pretty good 3B",
+    "Video": "https://youtu.be/ZFNSCFwfFCQ?si=PUp0sJznziHdUTqU&t=683",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 9.6,
+    "PitchRank": 5.2,
+    "CatchRank": "",
+    "SSRank": 3.2,
+    "InfRank": 7.1,
+    "1BRank": "",
+    "OFRank": 5.1,
+    "Spring ": "Majors",
+    "Team": "Royals",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 8.0,
+    "SMr Run": 7.0,
+    "Smr Throw": 9.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 9.0,
+    "Smr Pitcher": "Excellent",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, 3B",
+    "Smr Bat Order": "5-6",
+    "Smr Comments": "Noah was our go to 3rd baseman all summer long. Has a solid glove and a strong accurate arm. Contributed heavily on the mound as well. Throws a high percentage of strikes consistently. He also had a really strong - consistent summer at the plate. Showed good power, knocking in a lot of runs. ",
+    "Tryout Hit": 10,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 8.0,
+    "Tryout Pops": 8.5,
+    "Notes": "soft hand great arm",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 7,
+    "Spring OF": 7,
+    "Spring Inf": 7,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "2B, SS, 3B",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Solid all around player. Can play middle infield or 3B. Solid pitcher for us. Solid hitter with good contact and runs bases well. Good baseball IQ. Struggles with emotions but fun kid to coach"
+  },
+  {
+    "Last": "Davis",
+    "First": "William",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.0,
+    "MPH": 50.0,
+    "Intel": "Pitcher hitter, not defense, hard up the middle, not a great runner, struggled during the Spring hitting but did great in the summer. Can be full on tears on the mound",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": -1.0,
+    "HitRank": 9.5,
+    "PitchRank": 5.0,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.6,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 9.0,
+    "SMr Run": 5.0,
+    "Smr Throw": 9.0,
+    "Smr OF": 6.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Excellent",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, 3B",
+    "Smr Bat Order": "5-6",
+    "Smr Comments": "William contributed heavily with his bat and arm this summer. He hits the ball hard and is extremely consistent at the plate. Can thrown with good velo, just needs to work on his off-speed to be a bigger threat on the mound. Defensively he is limited to 3rd base as his only Infield position and can struggle in the outfield. Quiet kid - can let a few balls get the best of him on the mound but was much stronger mentally this summer than last summer. ",
+    "Tryout Hit": 7,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 6.9,
+    "Tryout Pops": 5.7,
+    "Notes": ", baseball kid",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 8,
+    "Spring OF": 7,
+    "Spring Inf": 7,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 2B, 3B, OF",
+    "Spring Bat Order": "5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "William is a great baseball player. He was streaky, and part of that was due to his attitude. There were times he'd pitch complete games giving up 1-2 runs, but there were also times where he'd break down if he started to get hit. Same thing at the plate - had some games where'd he'd rip, and some where he'd strike out once and get down on himself. His attitude got so much better towards the end of the season, and he became a much better teammate. He's a great kid and an all around great player, I imagine the attitude thing will continue to improve as he matures"
+  },
+  {
+    "Last": "Cage",
+    "First": "Miles",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 54.0,
+    "Intel": "THnks a lot, via the dad, talent wise is the best, great arm shined on the mound, kinda slumped at the plate in the Spring",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 9.4,
+    "PitchRank": 5.3,
+    "CatchRank": "",
+    "SSRank": 3.3,
+    "InfRank": 7.3,
+    "1BRank": "",
+    "OFRank": 5.2,
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 7.0,
+    "SMr Run": 8.0,
+    "Smr Throw": 9.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 9.0,
+    "Smr Pitcher": "Excellent",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, SS",
+    "Smr Bat Order": "5-6",
+    "Smr Comments": "Miles predominately played SS for us and did a great job all summer. Has a solid glove and strong accurate arm. Was also one of our best Pitchers. This was his 2nd summer season, and you can see a lot of growth in his game. He also had a good season offensively. Lots of power, just needs to be more consistent at the plate. ",
+    "Tryout Hit": 6,
+    "Tryout Run": 7.5,
+    "Tryout Throw": 8.0,
+    "Tryout Grounders": 9.0,
+    "Tryout Pops": 8.0,
+    "Notes": "short stop potential",
+    "Spring Hit": 7,
+    "Spring Run": 8,
+    "Spring Throw": 9,
+    "Spring OF": 9,
+    "Spring Inf": 9,
+    "Spring Pitch": "Excellent",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, SS, 3B",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Best pitcher we had, throws gas, can mash but got in his own head at times (both on the mound and at the plate), great in the field, really great baseball IQ, great kid all around"
+  },
+  {
+    "Last": "Lester",
+    "First": "Walker",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 5.0,
+    "MPH": 45.0,
+    "Intel": "",
+    "Video": "https://youtu.be/aEdUU8TmSxg?si=enHnwV7wl-68W1Bu&t=465",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 8.2,
+    "PitchRank": 1.1,
+    "CatchRank": 0.5,
+    "SSRank": "",
+    "InfRank": 1.1,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Cardinals",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 9.0,
+    "SMr Run": 9.0,
+    "Smr Throw": 8.0,
+    "Smr OF": 6.0,
+    "Smr Infield": 5.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Poor",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, 3B",
+    "Smr Bat Order": "1-2, 3-4",
+    "Smr Comments": "Walker was a total pleasure to coach!  He made the most strides from the start of the summer to the end.  Has a ton of power, hits for average too. Not afraid to swing, does have some swing and miss and doesn't recognize the outside strike call as much. Featured the most extra base hits not eh team and highest average.  He is also one of the better baserunners on the team, very aggressive.  We finally connived him to take the mound for the first time and he did great! No mechanics, but I suspect he will work on that moving forward. Wants to throw multiple pitches and locked down 3B for us this summer. He is still working on fundamentals with fielding, big arm, probably has the most upside of any kid in this age group as he has made leaps and will continue to. Not a catcher. Huge kid, coachable! ",
+    "Tryout Hit": 9,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 6.9,
+    "Tryout Pops": 7.0,
+    "Notes": "",
+    "Spring Hit": 9,
+    "Spring Run": 8,
+    "Spring Throw": 6,
+    "Spring OF": 9,
+    "Spring Inf": 8,
+    "Spring Pitch": "Poor",
+    "Spring Catch": "Average",
+    "Spring Attendance": "Average",
+    "Spring Positions": "C, 1B, 3B, OF",
+    "Spring Bat Order": "1-2, 3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Walker is a good kid who could be one of the best players in the league if he puts his mind to it. He is so naturally talented but is kinda a goof ball and has some trouble focusing. Big and strong, walker played almost every position for us this year, his strongest being at 3B and CF. He can catch but we didn't really need him behind the plate this year. Slumped hard at the plate during the season but back half he is smoking the ball and is now leading off for us. Fast as hell. He pitched once for us and it was a disaster. His dad needs to give him some pitching lessons and he has so much potential "
+  },
+  {
+    "Last": "Vetter",
+    "First": "Luke",
+    "Nickname": "Luke",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 44.0,
+    "Intel": "Package player, will get dirty, doesn't have the biggest arm, slaps singles, OF only, can think a lot but not as vocal about it",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 8.1,
+    "PitchRank": 3.0,
+    "CatchRank": "",
+    "SSRank": 3.0,
+    "InfRank": 7.0,
+    "1BRank": "",
+    "OFRank": 5.5,
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 7.0,
+    "SMr Run": 9.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 9.0,
+    "Smr Infield": 9.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "SS, OF",
+    "Smr Bat Order": "1-2",
+    "Smr Comments": "Luke brings tremendous effort and always has a great attitude. He had a great summer defensively spending the majority if his time in the OF and could fill in up the middle if needed. While he lacks arm strength to get fast hitters out, he makes up for in his effort fielding ground balls. He can give you some innings on the mound, has good movement just doesn't have same velo as others. ",
+    "Tryout Hit": 5,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 5.0,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 7.0,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 9,
+    "Spring Throw": 7,
+    "Spring OF": 9,
+    "Spring Inf": 9,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 2B, SS, 3B, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "One of the best we had, great contact hitter, great glove, threw strikes, fast as hell, great attitude, pleasure to coach. Didn't use him behind the plate but he can catch too"
+  },
+  {
+    "Last": "Deibert",
+    "First": "Christopher",
+    "Nickname": "Harry",
+    "Throws": "Left",
+    "Bats": "Left",
+    "Size": 2.5,
+    "MPH": 49.0,
+    "Intel": "Better all around player than lower longhorns, solid contact hitter, great 1B, Lefty",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 8.0,
+    "PitchRank": 3.0,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": 3.0,
+    "OFRank": 4.2,
+    "Spring ": "Majors",
+    "Team": "Marlins",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 8.0,
+    "SMr Run": 8.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, 1B, OF",
+    "Smr Bat Order": "3-4",
+    "Smr Comments": "Harry did a great job holding down 1st for us this summer. Is a sound Outfielder and was able to give us a few innings on the mound as well. Works hard each and every day and always has a great attitude. ",
+    "Tryout Hit": 10,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 6.5,
+    "Notes": "Lefty",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 8,
+    "Spring OF": 8,
+    "Spring Inf": 8,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 1B, 3B, OF",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Great kid, great family. Lefty, Lefty. Hit for high average with modest power. Most consistent pitcher & steady fielder. Missed occasionally due to hockey conflicts (plays on an elite travel hockey team). Great teammate. Solid Bronco candidate."
+  },
+  {
+    "Last": "Sanford",
+    "First": "Robert",
+    "Nickname": "Wren",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": 55.0,
+    "Intel": "He pouts a good bit, but could be fine, just not as engaged as some of the others maybe a little bit of back talk, not as happy to be out",
+    "Video": "https://youtu.be/ZFNSCFwfFCQ?si=K91wO62p8qtBPKWZ&t=793",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 7.5,
+    "PitchRank": 3.0,
+    "CatchRank": 3.2,
+    "SSRank": "",
+    "InfRank": 1.3,
+    "1BRank": "",
+    "OFRank": 4.5,
+    "Spring ": "Majors",
+    "Team": "Royals",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 7.0,
+    "SMr Run": 6.0,
+    "Smr Throw": 6.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 6.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "C, OF",
+    "Smr Bat Order": "9-10",
+    "Smr Comments": "Wren missed the first few weeks due to an arm injury but quickly caught up to speed from being out over a month. He played well at Catcher and OF for us. Has one of the stronger arms behind the plate, so when accurate has the capability to throw out runners. Had a solid offensive showing at the plate this summer - with good power. ",
+    "Tryout Hit": 6,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.9,
+    "Tryout Grounders": 6.7,
+    "Tryout Pops": 7.3,
+    "Notes": "bb kid",
+    "Spring Hit": 9,
+    "Spring Run": 9,
+    "Spring Throw": 8,
+    "Spring OF": 9,
+    "Spring Inf": 8,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Excellent",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 2B, SS, 3B, OF",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Great hitter, consistent 2-3 hole. Runs bases very well with High IQ for the game. Has natural pitching ability and does well if emotions don't get in the way. Solid glove in IF and OF no matter where you put him. Excels at Catcher with solid arm. \"Cool\" kid but emotions are an issue "
+  },
+  {
+    "Last": "Fraser",
+    "First": "Langston",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 55.0,
+    "Intel": "Almost went yard at 9u tryouts",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.5,
+    "HitRank": 7.4,
+    "PitchRank": 1.2,
+    "CatchRank": 1.1,
+    "SSRank": 1.1,
+    "InfRank": 6.1,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "D'Backs",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 7.0,
+    "SMr Run": 7.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Average",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, C, SS, OF",
+    "Smr Bat Order": "3-4, 5-6",
+    "Smr Comments": "Langston gets down on himself easily and needs to be built back up. He is particularly hard on himself. I would categorize him as pretty good at all things on the baseball field but excellent at nothing He has a good arm, good bat, good base running, good catcher, good pitcher (Throws Strikes, but gets hit). He is just a few steps away from being excellent.  He hits for power, and average, will take walk when there but not afraid to swing and will strike out along the way. He is willing to play anywhere. Catching was serviceable but not a +. We moved away form him as our second catcher. We did play him at SS a good bit. Was good at ground balls, but refused to charge the ball ever resulting in a lot of bang bang plays that were closer than they should have been. He pitches well, but gets hit when throwing strikes. I think he could have a lot of upside if he keeps working hard and doesn't eat himself up as much. ",
+    "Tryout Hit": 9,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 7.5,
+    "Notes": "3B",
+    "Spring Hit": 7,
+    "Spring Run": 8,
+    "Spring Throw": 8,
+    "Spring OF": 6,
+    "Spring Inf": 5,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Average",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 2B, 3B",
+    "Spring Bat Order": "3-4, 5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Elite kid. You want this coachable kid on your team. Big bag and kid just wants to compete and be a team player. His pitching is all over the place. Needs to have more control. His catching is mediocre. Better infielder. Great parents. Big strong kid!  "
+  },
+  {
+    "Last": "Elkourie",
+    "First": "Cayden",
+    "Nickname": "",
+    "Throws": "Left",
+    "Bats": "Left",
+    "Size": 3.0,
+    "MPH": 48.0,
+    "Intel": "Interesting personality, best first baseman, that's all he can play, will slap hit balls, not that fast",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 7.1,
+    "PitchRank": 2.0,
+    "CatchRank": 1.0,
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": 3.1,
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Rays",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 8.0,
+    "SMr Run": 6.0,
+    "Smr Throw": 8.0,
+    "Smr OF": 9.0,
+    "Smr Infield": 9.0,
+    "Smr Pitcher": "Good",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, C, 1B",
+    "Smr Bat Order": "1-2, 3-4",
+    "Smr Comments": "Cayden is one of the better all-round players on the team and turned into one of the leaders on the team.  He had the most hits on the team, however did not hit for as much power as he has in the past. Least strikeouts on the team and highest OBP.  Very knowledgable on all aspects of the game, working on his speed on the base paths.  He was the ERA leader on the team with Heath Sheehy right on his tail. Much like Heath, he delivers weak contact keeping batter off balance and has a good pickoff move being a lefty.  Plays 1B and Pitcher primarily, but ended up being our second catcher when Graham needed breaks. He finished with the highest fielding percentage on the team as well. He is fantastic at scooping short hops and generally fielding his positions. Areas of improvement needed are speed on the base paths, driving the ball deep much like he did in the spring. ",
+    "Tryout Hit": 8,
+    "Tryout Run": 3.0,
+    "Tryout Throw": 6.5,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 6.5,
+    "Notes": "L",
+    "Spring Hit": 8,
+    "Spring Run": 6,
+    "Spring Throw": 7,
+    "Spring OF": 8,
+    "Spring Inf": 8,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 1B",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Cayden has a good glove at first and is a solid pitcher on the mound. Line drive hitter, consistent at the plate. Not the fastest out there but knows what he's doing on the basepath. Has high expectations for himself. "
+  },
+  {
+    "Last": "Brown",
+    "First": "McRae",
+    "Nickname": "",
+    "Throws": "Left",
+    "Bats": "Left",
+    "Size": 5.0,
+    "MPH": 56.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": -3.0,
+    "HitRank": 7.0,
+    "PitchRank": 3.5,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": 2.3,
+    "OFRank": 4.3,
+    "Spring ": "Majors",
+    "Team": "Cardinals",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 7.0,
+    "SMr Run": 5.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Good",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, 1B, OF",
+    "Smr Bat Order": "3-4, 5-6",
+    "Smr Comments": "McRae has a lot of upside, but the thing that will leave you wanting more is his overall effort.  He can be challenging to coach at times and will mumble things under his breath as your giving instructions.  Refuses to hustle on plays and won't help himself out on the mound with making plays for himself.  He has a big bat, but the swing was slow through the zone this summer resulting in mostly weka hits the opposite way. He did get into a few balls driving them to the wall.  Plays a good 1b but could be much better with more effort.  His pitching was generally wild all summer with leading the team in BB's hit by pitches, but found ways to get out of the jams most of the time. He would allow the factors around him to affect his play and had to be coached delicately.  With an attitude adjustment and more effort, he could be one of th best overall players on the team. ",
+    "Tryout Hit": 7,
+    "Tryout Run": 4.0,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 6.0,
+    "Notes": "lefty with big arm",
+    "Spring Hit": 9,
+    "Spring Run": 7,
+    "Spring Throw": 10,
+    "Spring OF": 10,
+    "Spring Inf": 10,
+    "Spring Pitch": "Excellent",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 1B",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "McRae is a great kid. He was our go to guy on the mound this year and I don't think he ever made an error at first base. also has a nasty pickoff move that will only improve with practice, he probably picked off close to 10 guys this year. His size and being a lefty limits him to play other positions, but I'm sure he would excel in the outfield or 3rd base. He has a super high baseball IQ and is surprisingly quick on the basepaths. He hits for power and is super consistent at making contact. Very positive and is always lifting the team up."
+  },
+  {
+    "Last": "Friedman",
+    "First": "Charles",
+    "Nickname": "Charlie",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.2,
+    "MPH": 56.0,
+    "Intel": "Arm issues, take Vetter all day, take Harry all day, doesn't connect with Coaches, has hitting ability, Noah right above Charlie",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": -1.0,
+    "HitRank": 6.55,
+    "PitchRank": 5.1,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.4,
+    "1BRank": "",
+    "OFRank": 5.0,
+    "Spring ": "Majors",
+    "Team": "Braves",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 5.0,
+    "SMr Run": 6.0,
+    "Smr Throw": 9.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Excellent",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, OF",
+    "Smr Bat Order": "9-10",
+    "Smr Comments": "Charlie did a nice job for us playing OF all summer long. Having coached him last summer, I know what he's capable of both offensively and on the mound. Unfortunately, he struggled at the plate most of the summer. Has a strong arm, so when he's on can be a force on the mound..  needs to improve his ball - strike ration, as he threw more balls than normal this summer.  ",
+    "Tryout Hit": 10,
+    "Tryout Run": 7.5,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 6.7,
+    "Tryout Pops": 7.5,
+    "Notes": "J boy",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 7,
+    "Spring OF": 8,
+    "Spring Inf": 7,
+    "Spring Pitch": "Excellent",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 3B",
+    "Spring Bat Order": "5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Charlie ended up being our ACE pitcher. Whatever you need from him he will give it to you. He is also a great dugout presence. Definitely asserted himself as the team leader early on."
+  },
+  {
+    "Last": "Bayuk",
+    "First": "Shaw",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.5,
+    "MPH": 58.0,
+    "Intel": "Most athletic kid, strongest CF with a cannon, only had 5 hits all summer, never got lessons though, back up SS, good kid, would take him over langston and lester, but not micah",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 6.51,
+    "PitchRank": 3.0,
+    "CatchRank": "",
+    "SSRank": 1.0,
+    "InfRank": 6.0,
+    "1BRank": "",
+    "OFRank": 5.6,
+    "Spring ": "Majors",
+    "Team": "D'Backs",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 3.0,
+    "SMr Run": 8.0,
+    "Smr Throw": 10.0,
+    "Smr OF": 9.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, OF",
+    "Smr Bat Order": "11-12",
+    "Smr Comments": "Shaw was lights-out at CF for us, accounting for multiple double plays. Has a really strong arm. Did ok on the mound, struggled to throw consistently and with the velo he's capable of. Really struggled at the plate this summer. In his defense he's a pretty raw player, with little to no instruction. When/if he gets some help, given his size and strength, he could be a force at the plate. Just had way too many strikeouts this summer. ",
+    "Tryout Hit": 7,
+    "Tryout Run": 8.0,
+    "Tryout Throw": 8.0,
+    "Tryout Grounders": 7.5,
+    "Tryout Pops": 7.0,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 8,
+    "Spring Throw": 9,
+    "Spring OF": 8,
+    "Spring Inf": 7,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "2B, SS, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Love this kid. Gritty player. Loves the game and is a very coachable kid. Plays with a lot of passion. Crazy strong arm. Can be elite pitcher if he works on it. Vocal leader. Natural leader. "
+  },
+  {
+    "Last": "Clift",
+    "First": "Haydon",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 53.0,
+    "Intel": "Bbig defensive liablity",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": -1.0,
+    "HitRank": 6.5,
+    "PitchRank": 1.3,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Royals",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 8.0,
+    "SMr Run": 6.0,
+    "Smr Throw": 8.0,
+    "Smr OF": 6.0,
+    "Smr Infield": 4.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, OF",
+    "Smr Bat Order": "3-4, 5-6, 7-8",
+    "Smr Comments": "Hayden is a really nice kid who loves baseball.  He has a very strong arm, high contact abilities at the plate with some power. Puts most of the balls in play in the air. Low strikeout rate, doesn't look to take walks. Base running and IQ of the game situations will leave you wandering.  If he had a much higher IQ of the game and instincts he would be a great lead off hitter. As it stands we batted him lower in the order most of the summer bc his high fly ball rate and low base running IQ kept the bases clogged.  He generally hits really well and has a strong arm. He threw out a couple kids from RF at 1B. And threw 4 quite well when needed. Will not stay down or in front of a ground ball.  While he pitched well in the regular season, 50 feet was an adjustment for him. We weren't able to pitch him as much as we wanted because we couldn't throw strikes consistently.  He is a great spirit kid with a lot of upside! Really fast and when he figures out the baseball iq on the base paths, he will be a force to be reconned with. ",
+    "Tryout Hit": 5,
+    "Tryout Run": 6.5,
+    "Tryout Throw": 6.5,
+    "Tryout Grounders": 6.8,
+    "Tryout Pops": 6.5,
+    "Notes": "baseball kid",
+    "Spring Hit": 9,
+    "Spring Run": 7,
+    "Spring Throw": 8,
+    "Spring OF": 7,
+    "Spring Inf": 8,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 2B, SS, 3B, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Best hitter and hit for significant pop with (3) HR's. can sometimes be an idiot on paths but fine speed and can steal bags. Solid velo on mound and has interesting flick release that can mess with hitters. When hes on hes on, when hes off, hes really off. Solid 2B, 3B, can play SS / OF. Struggles with emotions at times. My most productive player as he was on 80% of the time. Very impressive upside."
+  },
+  {
+    "Last": "Shapiro",
+    "First": "Ethan",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.0,
+    "MPH": 52.0,
+    "Intel": "Best all around catcher, couldn't hit in the summer or the spring",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 6.5,
+    "PitchRank": "",
+    "CatchRank": 3.3,
+    "SSRank": "",
+    "InfRank": 1.5,
+    "1BRank": "",
+    "OFRank": 4.1,
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 5.0,
+    "SMr Run": 5.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 6.0,
+    "Smr Infield": 5.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Average",
+    "Smr Positions": "C, OF",
+    "Smr Bat Order": "11-12",
+    "Smr Comments": "Ethan was great behind the plate for us this summer and played some OF as well. He needs to improve his arm strength and mobility behind the plate, to find further success down the road. He struggled with hitting but makes good contact when he does. Great kid and very easy to coach. ",
+    "Tryout Hit": 9,
+    "Tryout Run": 5.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 8.0,
+    "Tryout Pops": 8.0,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 8,
+    "Spring OF": 8,
+    "Spring Inf": 8,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Excellent",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 1B, 3B",
+    "Spring Bat Order": "5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Shap's an animal behind the plate. Threw a bunch of kids out, back picked a couple on his own, and never had many past balls. Struggled at the plate at the beginning of the season but his bat came to life towards the end. Really great kid, great attitude, great teammate "
+  },
+  {
+    "Last": "Powers",
+    "First": "Joseph",
+    "Nickname": "Max",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.9,
+    "MPH": 62.0,
+    "Intel": "",
+    "Video": "https://youtu.be/aEdUU8TmSxg?si=yUUiaLRn3fK0bRjp&t=579",
+    "Conflicting Sport": "",
+    "Attitude": 1.0,
+    "HitRank": 6.4,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "RedSox",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 9,
+    "Tryout Run": 7.5,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 6.8,
+    "Tryout Pops": 6.9,
+    "Notes": "Raw athlete",
+    "Spring Hit": 7,
+    "Spring Run": 5,
+    "Spring Throw": 8,
+    "Spring OF": 5,
+    "Spring Inf": 6,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 2B, OF",
+    "Spring Bat Order": "3-4",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Went with Broncos for his arm/potential but not entirely sure. Really came on strong at the end of the year with his bat. He pitched a bit for us towards the end because he looked intimidating (easily biggest/tallest on the team) and he threw hard. Only threw about 40% in the zone but when he had it it was tough to hit. A little timid on grounders and isn't especially graceful but has a ton of upside. Would draft again if I get the chance."
+  },
+  {
+    "Last": "Sheehy",
+    "First": "Heath",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": "",
+    "Intel": "Bayuk is much more athletic, Sheehy is going to be a back up 2B",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 6.2,
+    "PitchRank": 2.0,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 2.0,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Rockies",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 7.0,
+    "SMr Run": 7.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 8.0,
+    "Smr Infield": 8.0,
+    "Smr Pitcher": "Good",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, SS, 3B",
+    "Smr Bat Order": "3-4, 7-8",
+    "Smr Comments": "Heath is a an incredible teammate, always positive, always professional. He started off really hot with the bat in his hand and tailed off towards the end of the summer. He was hitting it a lot right at guys unfortunately. He played primarily lock down SS and Pitching for this team. We played him a little at 3B, but needed him at SS on this team. He rarely made errors in the field and if he did usually due to the arm and not getting the ball to 1B. I would recommend playing him in a step or at 2B or 3B in a spring season. He knows baseball really well, understands the grind of the summer and along with Cayden was one of the true leaders on this team. His pitching is the right handed versions of Cayden inducing weak contact and keeping runner off balanced. He finished second on the team in ERA and was a huge part of our Sunday success. ",
+    "Tryout Hit": 10,
+    "Tryout Run": 6.5,
+    "Tryout Throw": 6.5,
+    "Tryout Grounders": 6.8,
+    "Tryout Pops": 6.75,
+    "Notes": "",
+    "Spring Hit": 8,
+    "Spring Run": 8,
+    "Spring Throw": 8,
+    "Spring OF": 8,
+    "Spring Inf": 9,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 3B",
+    "Spring Bat Order": "5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Heath is a machine at 3B. Great kid and family. Would definitely draft again but should be in Bronco"
+  },
+  {
+    "Last": "Robinson",
+    "First": "Crosby",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.8,
+    "MPH": 44.0,
+    "Intel": "Take him over a bottom 11 probbaly, sweet kid not a headache, small but can poke",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 6.1,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.2,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Royals",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 6.0,
+    "SMr Run": 7.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 6.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "2B, 3B, OF",
+    "Smr Bat Order": "1-2, 9-10, 11-12",
+    "Smr Comments": "Crosby is a great kid with a very positive attitude. He struggled in a lot of aspects on this team. Ultimately he hit .303 with an OBP of .515.  He took 10 walks which is tied for the most on the team and he has 7 hits. By comparison this team 7 guys hitting over .400. Crosby was fine in the order and lengthened our order. Ultimatle in the field he was much like Jacob where he was either on or off. We had to move him to OF since over time he proved to bot be able to field ground balls reliably. He would make about half the plays on IF but found more success in the outfield. He remained positive and kept playing hard and working hard never complaining. Great kid, pleasure to coach! Showed interest at the end of the season with pitching so we ran him in 2 bullpens and he looked good. We want him to continue to work on it moving forward. ",
+    "Tryout Hit": 5,
+    "Tryout Run": 6.8,
+    "Tryout Throw": 6.5,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 6.0,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 9,
+    "Spring Throw": 7,
+    "Spring OF": 8,
+    "Spring Inf": 7,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "2B, SS, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Lead-off hitter who got on base - hits for some pop despite being undersized. Aggressive and good baserunner. Solid CF, 2B and can play SS. Strong arm for size but does not transfer over to the mound. Best kid to coach on team and brings positive vibes for all"
+  },
+  {
+    "Last": "Labenz",
+    "First": "Willem",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": 48.0,
+    "Intel": "Biggest upside is pitching, so not good fit",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": -1.0,
+    "HitRank": 5.4,
+    "PitchRank": 1.4,
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Phillies",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 7.0,
+    "SMr Run": 9.0,
+    "Smr Throw": 8.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 6.0,
+    "Smr Pitcher": "Average",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, OF",
+    "Smr Bat Order": "5-6, 7-8",
+    "Smr Comments": "Willem is the fastest kid on the team, strong pitcher, and hitting the ball with authority. He finished 4th on the team in BA and finished toward the top with Strike Outs, and lowest walk total on the team. He looks to hit when he's up which I love! We batted him in the 6-7 hole with the thought being we can't afford strike outs towards the top.  He drove the ball well and runs for days!  His infield work is ok at best, but he plays a great OF. Strong arm, still working on reading the ball off the bat. Won't break on balls in the gap as fast as you want but makes up ground once he gets moving. His pitching started off rough but finished on a high nite at the end of the season. I think 50 feet was an adjustment for him, however he finished with his 3 best outings at the end of the season. ",
+    "Tryout Hit": 9,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 5.5,
+    "Notes": "",
+    "Spring Hit": 8,
+    "Spring Run": 10,
+    "Spring Throw": 7,
+    "Spring OF": 6,
+    "Spring Inf": 5,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, OF",
+    "Spring Bat Order": "7-8",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Got him to lock in and stop getting so down on himself when something didn't go his way. Started hitting with consistency. Glove remained shaky. Incredible speed "
+  },
+  {
+    "Last": "Hendershot",
+    "First": "Sullivan",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Left",
+    "Size": 1.25,
+    "MPH": 49.0,
+    "Intel": "looks the part but struggled mightily hitting, good all around although slow and has good fundamentals",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 5.3,
+    "PitchRank": 4.0,
+    "CatchRank": 3.1,
+    "SSRank": "",
+    "InfRank": 2.0,
+    "1BRank": "",
+    "OFRank": 4.0,
+    "Spring ": "Majors",
+    "Team": "Rockies",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 3.0,
+    "SMr Run": 4.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 6.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Good",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Average",
+    "Smr Positions": "P, C, OF",
+    "Smr Bat Order": "11-12",
+    "Smr Comments": "Sully is a versatile player. Played, OF, C and Pitched for us. He's a good kid and always brings a great attitude. He struggled at the plate all summer long and would not adjust from swinging a drop 8, even though he's the smallest kid on the team. Gets weekly lessons, so stuck with what he was told to do with that coach...The overall pace of play seemed to be a Strech for him as well. He did have a few nice outings for us on the mound and throws some decent off speed. Catching is probably his best defensive position. ",
+    "Tryout Hit": 7,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 9.0,
+    "Notes": "",
+    "Spring Hit": 6,
+    "Spring Run": 9,
+    "Spring Throw": 9,
+    "Spring OF": 9,
+    "Spring Inf": 9,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Good",
+    "Spring Attendance": "Average",
+    "Spring Positions": "P, C, SS, OF",
+    "Spring Bat Order": "1-2",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "This was Sully's first year at NYO. He has natural talent but strikes out a lot. Good family with both parent's very involved. He had the best mechanics on the team."
+  },
+  {
+    "Last": "Rathinam",
+    "First": "Asher",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 46.0,
+    "Intel": "No way",
+    "Video": "https://youtu.be/ZFNSCFwfFCQ?si=mLUjgodzVnU5Uc5V&t=732",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 5.2,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.0,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Orioles",
+    "Summer Team": "11U Longhorns",
+    "Smr Hit": 4.0,
+    "SMr Run": 4.0,
+    "Smr Throw": 5.0,
+    "Smr OF": 3.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Not Applicable",
+    "Smr Catcher": "Not Applicable",
+    "Smr Attendance": "Average",
+    "Smr Positions": "2B",
+    "Smr Bat Order": "9-10",
+    "Smr Comments": "Asher didn't play to his potential or to the same level we saw last summer. He struggled both offensively and defensively to keep up with the speed of play. Defensively only played 2nd, due to his challenges to field fly balls. Typically batting is his strength but didn't show any power this summer.  Really quiet kid and easy to coach. ",
+    "Tryout Hit": 9,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 6.7,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 7.3,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 9,
+    "Spring Throw": 5,
+    "Spring OF": 6,
+    "Spring Inf": 7,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "5-6",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "good kid. "
+  },
+  {
+    "Last": "Sprague",
+    "First": "Graham",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.5,
+    "MPH": 50.0,
+    "Intel": "struggled in the past, good OF, would fit in the mix ",
+    "Video": "https://youtu.be/aEdUU8TmSxg?si=20HeQBLE_TObqvzV&t=466",
+    "Conflicting Sport": "",
+    "Attitude": 3.0,
+    "HitRank": 4.2,
+    "PitchRank": 2.0,
+    "CatchRank": 2.2,
+    "SSRank": 1.3,
+    "InfRank": 6.3,
+    "1BRank": "",
+    "OFRank": 4.4,
+    "Spring ": "Majors",
+    "Team": "Cardinals",
+    "Summer Team": "11U Young Guns",
+    "Smr Hit": 5.0,
+    "SMr Run": 6.0,
+    "Smr Throw": 7.0,
+    "Smr OF": 7.0,
+    "Smr Infield": 7.0,
+    "Smr Pitcher": "Good",
+    "Smr Catcher": "Good",
+    "Smr Attendance": "Excellent",
+    "Smr Positions": "P, C, SS, OF",
+    "Smr Bat Order": "7-8, 9-10, 11-12",
+    "Smr Comments": "Graham this summer was all about the catching. He was so clearly our #1 option there he did the bulk of the catching this summer. The first 3 tournaments he was outstanding!! Langston backed up a little and then we had to train Cayden to catch as a second backup as graham was really tiring out down the stretch. He probably caught 85% of the innings this summer. He has wonderful back pick moves to both 1B and 3B. He picked off about 6 kids off 3b and 2 of 1b. He only picked off 1 at 2B, however most of the SB were on our pitchers slow moves to the plate. The thrown to 2B on 70 feet were a little loopy and short, but his catching was outstanding. He was a pros pro, going out to talk to his pitchers and calm them down working with coach on game plans relaying what he is seeing well to us so we could call the game. His hitting was a struggle, but ultimately hit .324 and kept his spirits up. .302 was the lowest average on the team and the guns were full of guns this summer. His pitching was really good when he keeps the fastball low and builds off of that. When the fastball is up, it gets crushed. He has a lot of junk pitches that kids can't touch.  When he is throwing strikes, and keeping low, he is unreal. He can play SS and Center really well, but we had to have him at catcher. Please to coach and another pros pro on this squad along with Heath and Cayden. ",
+    "Tryout Hit": 4,
+    "Tryout Run": 6.5,
+    "Tryout Throw": 7.5,
+    "Tryout Grounders": 7.5,
+    "Tryout Pops": 8.0,
+    "Notes": " bb kid",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 7,
+    "Spring OF": 9,
+    "Spring Inf": 8,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Excellent",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 2B, SS, 3B, OF",
+    "Spring Bat Order": "5-6, 7-8",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "\nGraham is a great kid who loves playing baseball. He can also play just about any position, but he was best behind the plate for us this year. Good at middle infield and OF as well. He can pitch but usually the other team starts to catch on to him after 1-2 innings and starts to hit him pretty hard. When he makes contacts its good, but has had trouble putting the bat on the ball for us this year. Fast and great baseball IQ, when he gets on base you can usually count on him scoring. Awesome parents"
+  },
+  {
+    "Last": "Boteler",
+    "First": "Jake",
+    "Nickname": "Jake",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 52.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 4.1,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": 1.0,
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 9,
+    "Tryout Run": 6.0,
+    "Tryout Throw": 7.0,
+    "Tryout Grounders": 7.0,
+    "Tryout Pops": 6.9,
+    "Notes": "like the kid",
+    "Spring Hit": 6,
+    "Spring Run": 6,
+    "Spring Throw": 7,
+    "Spring OF": 8,
+    "Spring Inf": 6,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Average",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 3B, OF",
+    "Spring Bat Order": "5-6, 7-8",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Jake was solid all year. He didn't really leave CF for us late in the year and made some incredible plays. Got lit up on the mound a couple times but pitched very well in others. Same at the plate, sort of on and off, but he was definitely one of our better guys"
+  },
+  {
+    "Last": "LaManna",
+    "First": "Theodore",
+    "Nickname": "Theo",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.3,
+    "MPH": 46.0,
+    "Intel": "",
+    "Video": "https://youtu.be/oi9Mhai5Y8o?si=nQYZU2EFaR02oeYy&t=148",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 4.0,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "RedSox",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 9,
+    "Tryout Run": 4.5,
+    "Tryout Throw": 6.4,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 5.0,
+    "Notes": "",
+    "Spring Hit": 5,
+    "Spring Run": 5,
+    "Spring Throw": 8,
+    "Spring OF": 7,
+    "Spring Inf": 6,
+    "Spring Pitch": "Good",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, 2B, 3B, OF",
+    "Spring Bat Order": "5-6, 7-8",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "Super live arm that I expect to be even better next year. Wasn't one of our top pitchers because we had a few other guys (plus we needed a slightly above average 2B/3B) but I would think if he finds the zone (big if) on a regular basis he has potential. Was an above average guy on our 11th place squad (maybe only average at the plate though) but could breakthrough this upcoming year"
+  },
+  {
+    "Last": "Tongren",
+    "First": "Jett",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.0,
+    "MPH": 41.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 3.3,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.0,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Cardinals",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 5,
+    "Tryout Run": 5.9,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 6.9,
+    "Tryout Pops": 7.0,
+    "Notes": "",
+    "Spring Hit": 8,
+    "Spring Run": 6,
+    "Spring Throw": 8,
+    "Spring OF": 9,
+    "Spring Inf": 9,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Excellent",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "P, C, 2B, SS",
+    "Spring Bat Order": "1-2, 5-6, 7-8",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "Jett is an awesome kid who loves the sport and has a super high baseball IQ. Only thing limiting him is his size and speed (very slow somehow) but he gets great jumps and is fine on the basepaths. Despite his size not letting him hit for power, he hits well and gets on base. He's great behind the plate and in middle infield. Never stuck him in the OF but im sure he would do fine. He pitched in one of our scrimmages and one game and wasn't bad, but wouldn't be in our main rotation. Awesome family with a great attitude"
+  },
+  {
+    "Last": "Houston",
+    "First": "George",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 4.0,
+    "MPH": 47.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 3.2,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": 1.0,
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Rockies",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 6,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.5,
+    "Tryout Grounders": 6.9,
+    "Tryout Pops": 6.8,
+    "Notes": "has a nice glove for whatever that's worht",
+    "Spring Hit": 6,
+    "Spring Run": 5,
+    "Spring Throw": 7,
+    "Spring OF": 7,
+    "Spring Inf": 7,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "3B, OF",
+    "Spring Bat Order": "7-8",
+    "Spring Rec.": "Bronco",
+    "Spring Comments": "George was a great addition to the team and always had a great attitude. Did not mind playing left field and made a lot of great plays. He pitches slow but for strikes and rarely gave up a ton of hits. Awesome family too"
+  },
+  {
+    "Last": "Hammond",
+    "First": "Jonathan",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.2,
+    "MPH": 49.0,
+    "Intel": "",
+    "Video": "https://youtu.be/ZFNSCFwfFCQ?si=fK5fxzQVRcYPv3JO&t=175",
+    "Conflicting Sport": "",
+    "Attitude": 0.0,
+    "HitRank": 3.1,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Orioles",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 9,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 6.9,
+    "Notes": "",
+    "Spring Hit": 4,
+    "Spring Run": 7,
+    "Spring Throw": 2,
+    "Spring OF": 1,
+    "Spring Inf": 1,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "11-12",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "we got in a fight if aliens were real practice 1, that is about as much action as I got from him the entire time. Great Kid, I expect him to cure cancer or find the aliens.... Great team player. "
+  },
+  {
+    "Last": "Ferguson",
+    "First": "Colin",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.75,
+    "MPH": 48.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": 2.0,
+    "HitRank": 2.0,
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": 1.5,
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "RedSox",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 3,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.9,
+    "Tryout Grounders": 6.7,
+    "Tryout Pops": 7.2,
+    "Notes": "",
+    "Spring Hit": 5,
+    "Spring Run": 7,
+    "Spring Throw": 8,
+    "Spring OF": 10,
+    "Spring Inf": 8,
+    "Spring Pitch": "Average",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "1B",
+    "Spring Bat Order": "5-6, 7-8, 9-10",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "I think he'll fall back to majors but I would take him in the draft for the glove alone. As good of a first baseman as you can get. Grandfather was a college coach so he knows his stuff. Not a terrific bat (batted about 7th to 9th for us) but when he was on the bases he knew what to do. One of my favorite kids to coach, mainly because I never needed to explain anything more than once to him. Great family too"
+  },
+  {
+    "Last": "Ellrod",
+    "First": "Ellison",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.25,
+    "MPH": 35.0,
+    "Intel": "Dad is \"intense\"",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": "",
+    "HitRank": "",
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Cardinals",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 5,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 5.0,
+    "Tryout Grounders": 6.0,
+    "Tryout Pops": 6.2,
+    "Notes": "",
+    "Spring Hit": 7,
+    "Spring Run": 7,
+    "Spring Throw": 4,
+    "Spring OF": 4,
+    "Spring Inf": 4,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Excellent",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "7-8",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "Ellison is a sweet and hilarious kid who struggled early in the season but his bad caught fire at the end. His dad is a little intense and you can tell he feels pressured and overwhelmed with him, especially because of his twin brother. We kept him in the outfield all year and he's pretty scared of the ball, but that can improved with practice. He really came in clutch at the plate for us in almost every game the back half of the season, and his confidence improved a lot after that."
+  },
+  {
+    "Last": "Hass",
+    "First": "Tripp",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.0,
+    "MPH": 49.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": "",
+    "HitRank": "",
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Rays",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 4,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 6.5,
+    "Tryout Pops": 6.0,
+    "Notes": "",
+    "Spring Hit": 2,
+    "Spring Run": 3,
+    "Spring Throw": 5,
+    "Spring OF": 7,
+    "Spring Inf": 4,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "9-10",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "Tripp was surprisingly an above average outfielder for us, making some impressive plays. But he lacks the body control to do anything else particularly well. Very few hits this season. But at least he's self aware that he's not very good"
+  },
+  {
+    "Last": "Schwartz",
+    "First": "Braxton",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 3.2,
+    "MPH": 45.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": "",
+    "HitRank": "",
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "Rays",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 6,
+    "Tryout Run": 6.2,
+    "Tryout Throw": 5.5,
+    "Tryout Grounders": 6.5,
+    "Tryout Pops": 6.0,
+    "Notes": "lefty,  fun kid bad tryout, better arm than showed",
+    "Spring Hit": 2,
+    "Spring Run": 5,
+    "Spring Throw": 5,
+    "Spring OF": 3,
+    "Spring Inf": 3,
+    "Spring Pitch": "Not Applicable",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "9-10, 11-12",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "Braxton looks the part but he doesn't play like it. Clearly loves the game and has the athleticism to be decent but was one of our worst hitters and would miss basic popups. Fun to coach though"
+  },
+  {
+    "Last": "Temple",
+    "First": "Luke",
+    "Nickname": "",
+    "Throws": "Right",
+    "Bats": "Right",
+    "Size": 2.9,
+    "MPH": 42.0,
+    "Intel": "",
+    "Video": "",
+    "Conflicting Sport": "",
+    "Attitude": "",
+    "HitRank": "",
+    "PitchRank": "",
+    "CatchRank": "",
+    "SSRank": "",
+    "InfRank": "",
+    "1BRank": "",
+    "OFRank": "",
+    "Spring ": "Majors",
+    "Team": "WhiteSox",
+    "Summer Team": "",
+    "Smr Hit": "",
+    "SMr Run": "",
+    "Smr Throw": "",
+    "Smr OF": "",
+    "Smr Infield": "",
+    "Smr Pitcher": "",
+    "Smr Catcher": "",
+    "Smr Attendance": "",
+    "Smr Positions": "",
+    "Smr Bat Order": "",
+    "Smr Comments": "",
+    "Tryout Hit": 7,
+    "Tryout Run": 7.0,
+    "Tryout Throw": 6.0,
+    "Tryout Grounders": 5.5,
+    "Tryout Pops": 5.9,
+    "Notes": "",
+    "Spring Hit": 5,
+    "Spring Run": 5,
+    "Spring Throw": 8,
+    "Spring OF": 4,
+    "Spring Inf": 4,
+    "Spring Pitch": "Poor",
+    "Spring Catch": "Not Applicable",
+    "Spring Attendance": "Average",
+    "Spring Positions": "OF",
+    "Spring Bat Order": "9-10",
+    "Spring Rec.": "Majors",
+    "Spring Comments": "Swing got 10x better over the season and he started to get some base knocks. Struggles in the field but has an absolute cannon. Tried him pitching but he couldn't throw strikes. Good kid but is often in his own world/can lack focus"
+  }
+];
+
+        // Filter out empty rows
+        const players = playersData.filter(p => p.Last && p.First);
+        
+        // Draft status storage
+        let draftStatus = JSON.parse(localStorage.getItem('draftStatus') || '{}');
+        
+        // Position rank columns (filter when sorting)
+        const positionRanks = ['PitchRank', 'CatchRank', 'SSRank', 'InfRank', '1BRank', 'OFRank'];
+        
+        // Current sort settings
+        let currentSort = 'HitRank';
+        let sortDescending = true;
+        
+        // Team colors
+        const teamColors = {
+            'Braves': { bg: '#2d5a27', class: 'team-braves', drafted: 'drafted-braves' },
+            'Pirates': { bg: '#c9a227', class: 'team-pirates', drafted: 'drafted-pirates' },
+            'Phillies': { bg: '#a82c2c', class: 'team-phillies', drafted: 'drafted-phillies' },
+            'Yankees': { bg: '#1e3a5f', class: 'team-yankees', drafted: 'drafted-yankees' },
+            'Rangers': { bg: '#2563eb', class: 'team-rangers', drafted: 'drafted-rangers' },
+            'Giants': { bg: '#ea580c', class: 'team-giants', drafted: 'drafted-giants' }
+        };
+        
+        // Get display name
+        function getDisplayName(player) {
+            const first = player.Nickname || player.First;
+            return `${first} ${player.Last}`;
+        }
+        
+        // Get attitude indicator
+        function getAttitudeIndicator(attitude) {
+            if (attitude === '' || attitude === null || attitude === undefined) return '';
+            const att = parseFloat(attitude);
+            if (isNaN(att)) return '';
+            if (att >= 3) return '<span class="attitude-icon attitude-awesome" title="Awesome attitude">⭐</span>';
+            if (att === 2) return '<span class="attitude-icon attitude-good" title="Good attitude">👍</span>';
+            if (att === 1) return '<span class="attitude-icon attitude-pleasant" title="Pleasant">😊</span>';
+            if (att < 0) return '<span class="attitude-icon attitude-concern" title="Attitude concern">⚠️</span>';
+            return '';
+        }
+        
+        // Get caution flags
+        function getCautionFlags(player) {
+            const flags = [];
+            if (player['Conflicting Sport'] && player['Conflicting Sport'] !== '') {
+                flags.push('Conflicting Sport');
+            }
+            if (player['Smr Attendance'] && player['Smr Attendance'] !== 'Excellent' && player['Smr Attendance'] !== '') {
+                flags.push(`Summer: ${player['Smr Attendance']}`);
+            }
+            if (player['Spring Attendance'] && player['Spring Attendance'] !== 'Excellent' && player['Spring Attendance'] !== '') {
+                flags.push(`Spring: ${player['Spring Attendance']}`);
+            }
+            return flags;
+        }
+        
+        // Get position tags sorted by rank
+        function getPositionTags(player, highlightRank) {
+            const positions = [];
+            const rankMap = {
+                'PitchRank': 'P',
+                'CatchRank': 'C',
+                'SSRank': 'SS',
+                'InfRank': 'INF',
+                '1BRank': '1B',
+                'OFRank': 'OF'
+            };
+            
+            for (const [rankKey, abbrev] of Object.entries(rankMap)) {
+                if (player[rankKey] && player[rankKey] !== '') {
+                    positions.push({
+                        abbrev: abbrev,
+                        rank: parseFloat(player[rankKey]),
+                        isHighlight: rankKey === highlightRank
+                    });
+                }
+            }
+            
+            // Sort by rank (highest first)
+            positions.sort((a, b) => b.rank - a.rank);
+            
+            return positions.map(p => 
+                `<span class="position-tag ${p.isHighlight ? 'highlight' : ''}">${p.abbrev} ${p.rank}</span>`
+            ).join('');
+        }
+        
+        // Render player card
+        function renderPlayerCard(player, index) {
+            const playerId = `${player.Last}-${player.First}`.replace(/\s/g, '-');
+            const draftTeam = draftStatus[playerId] || '';
+            const isDrafted = draftTeam !== '';
+            const draftedClass = isDrafted && teamColors[draftTeam] ? teamColors[draftTeam].drafted : '';
+            
+            const hitRank = player.HitRank || '--';
+            const displayName = getDisplayName(player);
+            const attitudeIcon = getAttitudeIndicator(player.Attitude);
+            const cautionFlags = getCautionFlags(player);
+            const positionTags = getPositionTags(player, currentSort);
+            
+            const teamInfo = [
+                player.Team ? `Spring: ${player.Team}` : '',
+                player['Summer Team'] ? `Summer: ${player['Summer Team']}` : ''
+            ].filter(Boolean).join(' | ');
+            
+            let cardHtml = `
+                <div class="player-card ${isDrafted ? 'drafted ' + draftedClass : ''}" data-player-id="${playerId}">
+                    <div class="player-main">
+                        <div class="rank-badge">${hitRank}</div>
+                        
+                        <div class="name-block">
+                            <div class="player-name">
+                                ${displayName} ${attitudeIcon}
+                            </div>
+                            <div class="team-info">${teamInfo}</div>
+                            ${cautionFlags.length > 0 ? `
+                                <div class="caution-flags">
+                                    ${cautionFlags.map(f => `<span class="caution-flag">⚠ ${f}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="quick-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${player.Size || '--'}</div>
+                                <div class="stat-label">Size</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${player.MPH || '--'}</div>
+                                <div class="stat-label">MPH</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${player.Throws?.charAt(0) || '-'}/${player.Bats?.charAt(0) || '-'}</div>
+                                <div class="stat-label">T/B</div>
+                            </div>
+                        </div>
+                        
+                        <div class="position-tags">${positionTags}</div>
+                        
+                        ${player.Intel ? `<div class="intel-section">"${player.Intel}"</div>` : ''}
+                        
+                        ${player.Video ? `<a href="${player.Video}" target="_blank" class="video-link" title="Watch Video">🎬</a>` : ''}
+                        
+                        <select class="draft-select" data-player-id="${playerId}" onchange="handleDraft(this)">
+                            <option value="">Undrafted</option>
+                            <option value="Braves" ${draftTeam === 'Braves' ? 'selected' : ''}>🟢 Braves (Me)</option>
+                            <option value="Pirates" ${draftTeam === 'Pirates' ? 'selected' : ''}>🟡 Pirates</option>
+                            <option value="Phillies" ${draftTeam === 'Phillies' ? 'selected' : ''}>🔴 Phillies</option>
+                            <option value="Yankees" ${draftTeam === 'Yankees' ? 'selected' : ''}>🔵 Yankees</option>
+                            <option value="Rangers" ${draftTeam === 'Rangers' ? 'selected' : ''}>💙 Rangers</option>
+                            <option value="Giants" ${draftTeam === 'Giants' ? 'selected' : ''}>🟠 Giants</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tabs-container">
+                        ${player['Smr Comments'] || player['Smr Hit'] ? `<button class="tab-btn" onclick="toggleTab(this, 'summer-${index}')">Summer</button>` : ''}
+                        ${player['Tryout Hit'] || player.Notes ? `<button class="tab-btn" onclick="toggleTab(this, 'tryout-${index}')">Tryout</button>` : ''}
+                        ${player['Spring Comments'] || player['Spring Hit'] ? `<button class="tab-btn" onclick="toggleTab(this, 'spring-${index}')">Spring</button>` : ''}
+                    </div>
+                    
+                    ${player['Smr Comments'] || player['Smr Hit'] ? `
+                        <div class="tab-content" id="summer-${index}">
+                            <div class="eval-stats">
+                                ${player['Smr Hit'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Hit']}</div><div class="eval-stat-label">Hit</div></div>` : ''}
+                                ${player['SMr Run'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['SMr Run']}</div><div class="eval-stat-label">Run</div></div>` : ''}
+                                ${player['Smr Throw'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Throw']}</div><div class="eval-stat-label">Throw</div></div>` : ''}
+                                ${player['Smr OF'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr OF']}</div><div class="eval-stat-label">OF</div></div>` : ''}
+                                ${player['Smr Infield'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Infield']}</div><div class="eval-stat-label">Infield</div></div>` : ''}
+                                ${player['Smr Pitcher'] && player['Smr Pitcher'] !== 'Not Applicable' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Pitcher']}</div><div class="eval-stat-label">Pitcher</div></div>` : ''}
+                                ${player['Smr Catcher'] && player['Smr Catcher'] !== 'Not Applicable' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Catcher']}</div><div class="eval-stat-label">Catcher</div></div>` : ''}
+                                ${player['Smr Positions'] ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Positions']}</div><div class="eval-stat-label">Positions</div></div>` : ''}
+                                ${player['Smr Bat Order'] ? `<div class="eval-stat"><div class="eval-stat-value">${player['Smr Bat Order']}</div><div class="eval-stat-label">Bat Order</div></div>` : ''}
+                            </div>
+                            ${player['Smr Comments'] ? `<div class="eval-comments">${player['Smr Comments']}</div>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${player['Tryout Hit'] || player.Notes ? `
+                        <div class="tab-content" id="tryout-${index}">
+                            <div class="eval-stats">
+                                ${player['Tryout Hit'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Tryout Hit']}</div><div class="eval-stat-label">Hit</div></div>` : ''}
+                                ${player['Tryout Run'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Tryout Run']}</div><div class="eval-stat-label">Run</div></div>` : ''}
+                                ${player['Tryout Throw'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Tryout Throw']}</div><div class="eval-stat-label">Throw</div></div>` : ''}
+                                ${player['Tryout Grounders'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Tryout Grounders']}</div><div class="eval-stat-label">Grounders</div></div>` : ''}
+                                ${player['Tryout Pops'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Tryout Pops']}</div><div class="eval-stat-label">Pops</div></div>` : ''}
+                            </div>
+                            ${player.Notes ? `<div class="eval-comments">${player.Notes}</div>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${player['Spring Comments'] || player['Spring Hit'] ? `
+                        <div class="tab-content" id="spring-${index}">
+                            <div class="eval-stats">
+                                ${player['Spring Hit'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Hit']}</div><div class="eval-stat-label">Hit</div></div>` : ''}
+                                ${player['Spring Run'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Run']}</div><div class="eval-stat-label">Run</div></div>` : ''}
+                                ${player['Spring Throw'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Throw']}</div><div class="eval-stat-label">Throw</div></div>` : ''}
+                                ${player['Spring OF'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring OF']}</div><div class="eval-stat-label">OF</div></div>` : ''}
+                                ${player['Spring Inf'] !== '' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Inf']}</div><div class="eval-stat-label">Infield</div></div>` : ''}
+                                ${player['Spring Pitch'] && player['Spring Pitch'] !== 'Not Applicable' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Pitch']}</div><div class="eval-stat-label">Pitcher</div></div>` : ''}
+                                ${player['Spring Catch'] && player['Spring Catch'] !== 'Not Applicable' ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Catch']}</div><div class="eval-stat-label">Catcher</div></div>` : ''}
+                                ${player['Spring Positions'] ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Positions']}</div><div class="eval-stat-label">Positions</div></div>` : ''}
+                                ${player['Spring Bat Order'] ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Bat Order']}</div><div class="eval-stat-label">Bat Order</div></div>` : ''}
+                                ${player['Spring Rec.'] ? `<div class="eval-stat"><div class="eval-stat-value">${player['Spring Rec.']}</div><div class="eval-stat-label">Rec.</div></div>` : ''}
+                            </div>
+                            ${player['Spring Comments'] ? `<div class="eval-comments">${player['Spring Comments']}</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            return cardHtml;
+        }
+        
+        // Toggle tab
+        function toggleTab(btn, tabId) {
+            const tabContent = document.getElementById(tabId);
+            const allTabs = btn.parentElement.querySelectorAll('.tab-btn');
+            const allContents = btn.closest('.player-card').querySelectorAll('.tab-content');
+            
+            if (tabContent.classList.contains('active')) {
+                tabContent.classList.remove('active');
+                btn.classList.remove('active');
+            } else {
+                allTabs.forEach(t => t.classList.remove('active'));
+                allContents.forEach(c => c.classList.remove('active'));
+                tabContent.classList.add('active');
+                btn.classList.add('active');
+            }
+        }
+        
+        // Handle draft
+        function handleDraft(select) {
+            const playerId = select.dataset.playerId;
+            const team = select.value;
+            
+            if (team) {
+                draftStatus[playerId] = team;
+            } else {
+                delete draftStatus[playerId];
+            }
+            
+            localStorage.setItem('draftStatus', JSON.stringify(draftStatus));
+            renderPlayers();
+        }
+        
+        // Sort and filter players
+        function getSortedPlayers() {
+            let filtered = [...players];
+            
+            // Filter by position rank if needed
+            if (positionRanks.includes(currentSort)) {
+                filtered = filtered.filter(p => p[currentSort] && p[currentSort] !== '');
+            }
+            
+            // Filter by draft status
+            const statusFilter = document.getElementById('statusFilter').value;
+            if (statusFilter === 'undrafted') {
+                filtered = filtered.filter(p => {
+                    const playerId = `${p.Last}-${p.First}`.replace(/\s/g, '-');
+                    return !draftStatus[playerId];
+                });
+            } else if (statusFilter === 'drafted') {
+                filtered = filtered.filter(p => {
+                    const playerId = `${p.Last}-${p.First}`.replace(/\s/g, '-');
+                    return !!draftStatus[playerId];
+                });
+            }
+            
+            // Sort
+            filtered.sort((a, b) => {
+                let aVal = a[currentSort] || 0;
+                let bVal = b[currentSort] || 0;
+                
+                if (typeof aVal === 'string') aVal = parseFloat(aVal) || 0;
+                if (typeof bVal === 'string') bVal = parseFloat(bVal) || 0;
+                
+                return sortDescending ? bVal - aVal : aVal - bVal;
+            });
+            
+            return filtered;
+        }
+        
+        // Render players
+        function renderPlayers() {
+            const sorted = getSortedPlayers();
+            const container = document.getElementById('playerList');
+            container.innerHTML = sorted.map((p, i) => renderPlayerCard(p, i)).join('');
+            document.getElementById('playerCount').textContent = `${sorted.length} Players`;
+        }
+        
+        // Export function
+        function exportByTeam() {
+            const teams = ['Braves', 'Pirates', 'Phillies', 'Yankees', 'Rangers', 'Giants'];
+            let content = '12U DRAFT RESULTS\n' + '='.repeat(40) + '\n\n';
+            
+            teams.forEach(team => {
+                const teamPlayers = players.filter(p => {
+                    const playerId = `${p.Last}-${p.First}`.replace(/\s/g, '-');
+                    return draftStatus[playerId] === team;
+                });
+                
+                content += `${team.toUpperCase()}${team === 'Braves' ? ' (YOUR TEAM)' : ''}\n`;
+                content += '-'.repeat(30) + '\n';
+                
+                if (teamPlayers.length === 0) {
+                    content += 'No players drafted\n';
+                } else {
+                    teamPlayers.forEach(p => {
+                        const name = getDisplayName(p);
+                        const smrRun = p['SMr Run'] || '--';
+                        const sprRun = p['Spring Run'] || '--';
+                        content += `${name} | Summer Run: ${smrRun} | Spring Run: ${sprRun}\n`;
+                    });
+                }
+                content += '\n';
+            });
+            
+            // Undrafted
+            const undrafted = players.filter(p => {
+                const playerId = `${p.Last}-${p.First}`.replace(/\s/g, '-');
+                return !draftStatus[playerId];
+            });
+            
+            content += 'UNDRAFTED\n';
+            content += '-'.repeat(30) + '\n';
+            undrafted.forEach(p => {
+                content += `${getDisplayName(p)} (Hit: ${p.HitRank || '--'})\n`;
+            });
+            
+            // Download
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '12U_Draft_Results.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Event listeners
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            renderPlayers();
+        });
+        
+        document.getElementById('sortOrderBtn').addEventListener('click', (e) => {
+            sortDescending = !sortDescending;
+            e.target.textContent = sortDescending ? 'HIGH → LOW' : 'LOW → HIGH';
+            e.target.classList.toggle('active', sortDescending);
+            renderPlayers();
+        });
+        
+        document.getElementById('statusFilter').addEventListener('change', renderPlayers);
+        
+        document.getElementById('exportBtn').addEventListener('click', exportByTeam);
+        
+        // Initial render
+        renderPlayers();
+    </script>
+</body>
+</html>
